@@ -1,5 +1,5 @@
 import conf from "/conf/conf.js";
-import { Client, Databases,ID } from "appwrite";
+import { Client, Databases,ID,Query,Storage } from "appwrite";
 
  export class Service {
     client = new Client();
@@ -50,7 +50,7 @@ import { Client, Databases,ID } from "appwrite";
             return false;   
         }
     }
-    async getPosts(slug) {
+    async getPost(slug) {
         try {
             return await this.databases.getDocument(conf.appwriteDatabaseId, conf.appwriteCollectionId, slug);
         } catch (error) {
@@ -58,6 +58,41 @@ import { Client, Databases,ID } from "appwrite";
             throw error;
         }
     }
-}
+    async getPosts(queries = [ Query.equal("status" , "active")]) {
+        try {
+            return await this.databases.listDocuments(conf.appwriteDatabaseId, conf.appwriteCollectionId, queries);
+        } catch (error) {
+            console.error("Error getting posts:", error);
+            throw error;
+        }   
+    }
+    //upload file
+    async uploadFile(file) {
+        try {
+            return await this.bucket.createFile(conf.appwriteBucketId, ID.unique(), file);
+        } catch (error) {
+            console.error("Error uploading file:", error);
+            throw error;
+        }
+    }
+    async deleteFile(fileId) {
+        try {
+             await this.bucket.deleteFile(conf.appwriteBucketId, fileId);
+                return true;
+        } catch (error) {
+            console.error("Error deleting file:", error);
+            throw error;
+        }
+    }
+    async getFilePreview(fileId) {
+        try {
+            return this.bucket.getFilePreview(conf.appwriteBucketId, fileId);
+        } catch (error) {
+            console.error("Error getting file preview:", error);
+            throw error;
+        }
+    }
+
+    }
 const service = new Service();
 export default service;
