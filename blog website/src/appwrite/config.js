@@ -1,4 +1,4 @@
-import conf from "/conf/conf.js";
+import conf from "..conf.js";
 import { Client, Databases,ID,Query,Storage } from "appwrite";
 
  export class Service {
@@ -7,7 +7,7 @@ import { Client, Databases,ID,Query,Storage } from "appwrite";
     bucket ;
     
     constructor() {
-        this.client.setEndpoint(conf.appwriteEndpoint).setProject(conf.appwriteProjectId);
+        this.client.setEndpoint(conf.appwriteUrl).setProject(conf.appwriteProjectId);
         this.databases = new Databases(this.client);
         this.bucket = new Storage(this.client);
     }
